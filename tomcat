@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Author: Balaram R
+# Author: Balaram R # techgyaan(at)gmail(dot)com
 # tomcat     This shell script takes care of starting and stopping Tomcat
 # chkconfig: - 35 80 20
 # Provides: tomcat
