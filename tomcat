@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Author: Balaram R
+# tomcat     This shell script takes care of starting and stopping Tomcat
+# chkconfig: - 35 80 20
+# Provides: tomcat
+
+ECHO=/bin/echo
+TEST=/usr/bin/test
+TOMCAT_USER=root
+TOMCAT_HOME=/opt/apache-tomcat-7.0.56
+TOMCAT_START_SCRIPT=$TOMCAT_HOME/bin/startup.sh
+TOMCAT_STOP_SCRIPT=$TOMCAT_HOME/bin/shutdown.sh
+
+$TEST -x $TOMCAT_START_SCRIPT || exit 0
+$TEST -x $TOMCAT_STOP_SCRIPT || exit 0
+
+start () {
+	$ECHO -n "Starting Tomcat"
+	su - $TOMCAT_USER -c "$TOMCAT_START_SCRIPT &"
+	$ECHO "."
+}
+
+stop () {
+	$ECHO -n "Stopping Tomcat\n"
+	su - $TOMCAT_USER -c "$TOMCAT_STOP_SCRIPT 60 -force &"
+	while [ "$(ps -fu $TOMCAT_USER | grep java | grep tomcat | wc -l)" -gt "0" ]; do
+		sleep 5; $ECHO -n "."
+	done
+	$ECHO "."
+}
+
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+	sleep 30
+        start
+        ;;
+    sleep)
+	$ECHO "Usage: tomcat {start|stop|restart}"
+	exit 1
+esac
+exit 0
